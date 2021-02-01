@@ -7,3 +7,12 @@ authors:
 crystal: 0.35.1
 
 license: MIT
+
+dependencies:
+  minion-common:
+    github: joshsoftware/minion-common
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 0.13.0

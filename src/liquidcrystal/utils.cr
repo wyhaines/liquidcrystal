@@ -18,7 +18,7 @@ module LiquidCrystal
       if collection.is_a?(String)
         return collection.empty? ? [] of String : [collection]
       end
-      return [] of String unless collection.respond_to?(:each)
+      return [] of String unless collection.responds_to?(:each)
 
       collection.each do |item|
         if to && to <= index
@@ -86,7 +86,7 @@ module LiquidCrystal
       when "now", "today"
         Time.local
       when /\A\d+\z/, Int
-        Time.new(seconds: obj.to_i64, nanoseconds: 0, location: Time::Location.local)
+        Time.unix(obj.to_i64)
       when String
         Minion::ParseDate.parse(obj)
       end

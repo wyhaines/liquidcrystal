@@ -1,4 +1,5 @@
 require "big"
+require "minion-common"
 
 module LiquidCrystal
   module Utils
@@ -74,7 +75,7 @@ module LiquidCrystal
     end
 
     def self.to_date(obj)
-      return obj if obj.respond_to?(:strftime)
+      return obj if obj.is_a?(Time)
 
       if obj.is_a?(String)
         return nil if obj.empty?
@@ -84,10 +85,10 @@ module LiquidCrystal
       case obj
       when "now", "today"
         Time.local
-      when /\A\d+\z/, Integer
-        Time.at(obj.to_i)
+      when /\A\d+\z/, Int
+        Time.new(seconds: obj.to_i64, nanoseconds: 0, location: Time::Location.local)
       when String
-        Time.parse(obj)
+        Minion::ParseDate.parse(obj)
       end
     rescue ::ArgumentError
       nil

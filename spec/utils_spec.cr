@@ -19,5 +19,6 @@ describe LiquidCrystal::Utils do
   end
 
   it "to_date renders a date from the arguments" do
+    LiquidCrystal::Utils.to_date("now").should eq Time.local
   end
 end

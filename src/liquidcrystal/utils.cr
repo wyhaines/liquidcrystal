@@ -1,4 +1,6 @@
-module Liquid
+require "big"
+
+module LiquidCrystal
   module Utils
     def self.slice_collection(collection, from, to)
       if (from != 0 || !to.nil?) && collection.respond_to?(:load_slice)
@@ -9,14 +11,13 @@ module Liquid
     end
 
     def self.slice_collection_using_each(collection, from, to)
-      segments = []
-      index    = 0
+      segments = [] of String
+      index = 0
 
-      # Maintains Ruby 1.8.7 String#each behaviour on 1.9
       if collection.is_a?(String)
-        return collection.empty? ? [] : [collection]
+        return collection.empty? ? [] of String : [collection]
       end
-      return [] unless collection.respond_to?(:each)
+      return [] of String unless collection.respond_to?(:each)
 
       collection.each do |item|
         if to && to <= index
@@ -33,13 +34,25 @@ module Liquid
       segments
     end
 
-    def self.to_integer(num)
-      return num if num.is_a?(Integer)
+    def self.to_integer(num : Number | String)
+      return num if num.is_a?(Int)
       num = num.to_s
-      begin
-        Integer(num)
-      rescue ::ArgumentError
-        raise Liquid::ArgumentError, "invalid integer"
+
+      class_list = [Int64, BigInt, nil]
+      class_list.each do |klass|
+        if klass.nil?
+          begin
+            return BigInt.new(BigFloat.new(num))
+          rescue ::ArgumentError
+            raise LiquidCrystal::ArgumentError.new("invalid integer")
+          end
+        else
+          begin
+            return klass.new(num)
+          rescue ::ArgumentError
+            next
+          end
+        end
       end
     end
 
@@ -47,10 +60,10 @@ module Liquid
       case obj
       when Float
         Float64.new(obj)
-      when Numeric
+      when Number
         obj
       when String
-        /\A-?\d+\.\d+\z/.match?(obj.strip) ? BigDecimal(obj) : obj.to_i
+        /\A-?\d+\.\d+\z/.matches?(obj.strip) ? BigDecimal.new(obj) : obj.to_i
       else
         if obj.respond_to?(:to_number)
           obj.to_number
@@ -69,7 +82,7 @@ module Liquid
       end
 
       case obj
-      when 'now', 'today'
+      when "now", "today"
         Time.local
       when /\A\d+\z/, Integer
         Time.at(obj.to_i)

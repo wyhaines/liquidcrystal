@@ -1,4 +1,4 @@
-require 'time'
+require "time"
 
 module LiquidCrystal
   module ToLiquid
@@ -12,7 +12,7 @@ class String
   include LiquidCrystal::ToLiquid
 end
 
-class Symbol
+struct Symbol
   include LiquidCrystal::ToLiquid
 end
 
@@ -24,26 +24,26 @@ class Hash
   include LiquidCrystal::ToLiquid
 end
 
-class Numeric
+struct Number
   include LiquidCrystal::ToLiquid
 end
 
-class Range
+struct Range
   include LiquidCrystal::ToLiquid
 end
 
-class Time
+struct Time
   include LiquidCrystal::ToLiquid
 end
 
-class TrueClass
+struct Bool
   include LiquidCrystal::ToLiquid
 end
 
-class FalseClass
+struct Nil
   include LiquidCrystal::ToLiquid
 end
 
-class NilClass
+struct Tuple
   include LiquidCrystal::ToLiquid
 end

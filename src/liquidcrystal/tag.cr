@@ -1,28 +1,24 @@
 module Liquid
   class Tag
-    getter nodelist : [] of String | Tag | Variable 
+    getter nodelist : Array(String | Tag | Variable)
     getter tag_name : String
     getter line_number : Int32
     getter :parse_context
 
     alias_method :options, :parse_context
-    include ParserSwitching
+    #include ParserSwitching
 
-    class << self
-      def parse(tag_name, markup, tokenizer, parse_context)
+    def self.parse(tag_name, markup, tokenizer, parse_context)
         tag = new(tag_name, markup, parse_context)
         tag.parse(tokenizer)
         tag
       end
 
-      def disable_tags(*tag_names)
+      def self.disable_tags(*tag_names)
         @disabled_tags ||= [] of Tag
         @disabled_tags.concat(tag_names)
         prepend(Disabler)
       end
-
-      private :new
-    end
 
     def initialize(@tag_name, @markup, @parse_context)
       @line_number   = parse_context.line_number
@@ -40,7 +36,7 @@ module Liquid
     end
 
     def render(_context)
-      ''
+      ""
     end
 
     # For backwards compatibility with custom tags. In a future release, the semantics
@@ -55,9 +51,7 @@ module Liquid
       false
     end
 
-    private
-
-    def parse_expression(markup)
+    private def parse_expression(markup)
       parse_context.parse_expression(markup)
     end
   end

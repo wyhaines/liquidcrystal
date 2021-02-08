@@ -1,4 +1,4 @@
-module Liquid
+module LiquidCrystal
   class Tag
     getter nodelist : Array(String | Tag | Variable)
     getter tag_name : String
